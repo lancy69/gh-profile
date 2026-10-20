@@ -1,5 +1,7 @@
 # gh-profile
 
+![Vibe Coding Badge](./assets/badge-vibe-coding.svg)
+
 An interactive, full-screen GitHub profile dashboard for the active `gh` account and host.
 
 ## Install and run
