@@ -1,26 +1,23 @@
 package main
 
 import (
+	"context"
+	"flag"
 	"fmt"
-
-	"github.com/cli/go-gh/v2/pkg/api"
+	"os"
 )
 
 func main() {
-	fmt.Println("hi world, this is the gh-profile extension!")
-	client, err := api.DefaultRESTClient()
-	if err != nil {
-		fmt.Println(err)
-		return
+	flag.Usage = func() {
+		fmt.Fprintln(flag.CommandLine.Output(), "Usage: gh profile\n\nAn interactive dashboard for your authenticated GitHub profile.\n\nScroll: ↑/↓ or j/k, PgUp/PgDn, Home/End. Quit: q or Ctrl-C.")
 	}
-	response := struct {Login string}{}
-	err = client.Get("user", &response)
-	if err != nil {
-		fmt.Println(err)
-		return
+	flag.Parse()
+	if flag.NArg() != 0 {
+		fmt.Fprintln(os.Stderr, "gh-profile: unexpected arguments; use --help")
+		os.Exit(1)
 	}
-	fmt.Printf("running as %s\n", response.Login)
+	if err := run(context.Background(), os.Stdin, os.Stdout, loadProfile); err != nil {
+		fmt.Fprintf(os.Stderr, "gh-profile: %s\n", sanitizeText(err.Error()))
+		os.Exit(1)
+	}
 }
-
-// For more examples of using go-gh, see:
-// https://github.com/cli/go-gh/blob/trunk/example_gh_test.go
